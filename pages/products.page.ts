@@ -42,4 +42,7 @@ export class ProductsPage extends BasePage {
   async expectCartBadgeToBeEmpty() {
    await expect(this.cartBadge()).toHaveCount(0);
   }
+  async expectCartBadgeCount(expected: number) {
+    await expect(this.cartBadge()).toHaveText(expected.toString());
+  }
 }
