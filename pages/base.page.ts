@@ -19,16 +19,24 @@ export class BasePage {
     await expect(this.pageTitle()).toHaveText(title);
   }
 
-  async getFrameLocator(selector: string ): Promise<FrameLocator> {
-    return this.page.frameLocator(selector)
-  }
+  async removeAdsIfExist() {
+    await this.page.evaluate(() => {
+      document.querySelectorAll('iframe[id^="google_ads"]').forEach(el => el.remove());
+      document.querySelectorAll('#fixedban').forEach(el => el.remove());
+      // Remove full-page Google Vignette overlay if present
+      const vignette = document.querySelector('#google_vignette');
+      if (vignette) {
+        vignette.remove();
+      }
 
-  async getFrameHandle(selector: string): Promise<Frame> {
-   const frameLocator = await this.page.waitForSelector(selector);
-   const frameHandle = await frameLocator.contentFrame();
-    if( !frameHandle) {
-      throw new Error(`Frame ${selector} not found`);
-    }
-    return frameHandle;
-}
+      // Also remove any class-based overlay (sometimes it uses 'overlay' or 'modal')
+      document.querySelectorAll('.overlay, .modal, .ads, .advertisement').forEach(el => el.remove());
+
+      // If vignette hash present → restore original URL
+      if (window.location.hash.includes('google_vignette')) {
+        history.replaceState(null, '', window.location.pathname);
+      }
+
+    });
+  }
 } 

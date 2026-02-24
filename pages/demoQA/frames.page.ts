@@ -1,26 +1,40 @@
-import { BasePage } from  "../base.page";
-import {Page, expect} from '@playwright/test'
+import { BasePage } from "../base.page";
+import { Page } from '@playwright/test'
 
 export class FramesPage extends BasePage {
     frame1Locator: string;
     frame2Locator: string;
+    parentFrameLocator: string;
 
     constructor(page: Page) {
         super(page);
 
         this.frame1Locator = 'iframe#frame1';
         this.frame2Locator = 'iframe#frame2';
+        this.parentFrameLocator = 'iframe#frame1';
     }
 
-    async getFrame1Text(): Promise<string> {
-       const frame1 = await this.getFrameLocator(this.frame1Locator);
-       const text =   await frame1.locator('h1#sampleHeading').textContent();
-       return text ?? '';
-    }
+    frame1 = () =>
+        this.page.frameLocator('iframe#frame1');
 
-    async getFrame2Text(): Promise<string> {
-        const frame2 = await this.getFrameLocator(this.frame2Locator);
-        const text = await frame2.locator('h1#sampleHeading').textContent();
-        return text ?? '';
-    }
- }
+    frame2 = () =>
+        this.page.frameLocator('iframe#frame2');
+
+    frame1Heading = () =>
+        this.frame1().locator('#sampleHeading');
+
+    frame2Heading = () =>
+        this.frame2().locator('#sampleHeading');
+
+    parentFrame = () =>
+        this.page.frameLocator(this.parentFrameLocator);
+
+    childFrame = () =>
+        this.parentFrame().frameLocator('iframe');
+
+    parentText = () =>
+        this.parentFrame().locator('body');
+
+    childText = () =>
+        this.childFrame().locator('body');
+}

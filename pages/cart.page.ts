@@ -8,6 +8,7 @@ export class CartPage extends BasePage {
         super(page);
     }
 
+
     cartItemRows = () => this.page.locator('.cart_item');
     cartItemQtyValues = () => this.page.locator('.cart_quantity');
     cartItemNames = () => this.page.locator('.cart_item .inventory_item_name');
