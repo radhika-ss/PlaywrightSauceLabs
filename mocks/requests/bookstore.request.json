@@ -1,0 +1,4 @@
+{
+  "url": "**/BookStore/v1/Books",
+  "method": "GET"
+}

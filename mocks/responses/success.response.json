@@ -1,0 +1,6 @@
+{
+  "books": [
+    { "isbn": "123", "title": "Mock Book 1", "author": "Author A" },
+    { "isbn": "456", "title": "Mock Book 2", "author": "Author B" }
+  ]
+}

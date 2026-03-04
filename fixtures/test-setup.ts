@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test';
+import { test as base, APIRequestContext, APIRequest } from '@playwright/test';
 import { LoginPage } from '../pages/login.page';
 import { ProductsPage } from '../pages/products.page';
 import { CartPage } from '../pages/cart.page';
@@ -10,6 +10,9 @@ import { BasePage } from '../pages/base.page';
 import { AlertUtil } from '../utils/alertUtils';
 import { AlertsPage } from '../pages/demoQA/alerts.page';
 import { UploadDownloadPage } from '../pages/demoQA/uploadDownload.page';
+import { BookingAPI } from '../api/bookingAPI';
+import { getEnvironment, getCredentials } from '../config/config';
+
 
 type MyFixtures = {
   basePage: BasePage;
@@ -23,9 +26,22 @@ type MyFixtures = {
   alertUtil: AlertUtil;
   alertsPage: AlertsPage;
   uploadDownloadPage: UploadDownloadPage;
+  bookingAPI: BookingAPI;
+  envSettings: ReturnType<typeof getEnvironment>;
+  creds: ReturnType<typeof getCredentials>;
 };
 
 export const test = base.extend<MyFixtures>({
+  // Provide the environment settings
+  envSettings: async ({}, use) => {
+    await use(getEnvironment()); // returns the typed environment object
+  },
+
+  // Provide credentials for current env
+  creds: async ({}, use) => {
+    await use(getCredentials()); // returns {username, password}
+  },
+
   basePage: async ({ page }, use) => {
     await use(new BasePage(page));
   },
@@ -68,7 +84,11 @@ export const test = base.extend<MyFixtures>({
 
   uploadDownloadPage: async({page}, use) => {
     await use(new UploadDownloadPage(page));
-  }
+  },
+
+  bookingAPI: async ({ request, envSettings }, use) => {
+    await use(new BookingAPI(request, envSettings.baseURL));
+  },
 });
 
 export { expect } from '@playwright/test';
